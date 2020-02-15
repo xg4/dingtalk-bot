@@ -13,24 +13,23 @@
   },
   "license": "MIT",
   "author": "xg4 <xingor4@gmail.com>",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "browser": "dist/index.umd.js",
-  "types": "dist/types/index.d.ts",
-  "typings": "dist/types/index.d.ts",
   "scripts": {
     "prebuild": "npm run clean",
     "build": "npm run build:types && npm run build:js",
     "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "clean": "rimraf dist",
-    "pretty": "prettier --write src/**/*",
     "lint": "eslint src/**/* --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "npm run build",
+    "pretty": "prettier --write src/**/*",
     "postpublish": "git push --follow-tags",
     "prerelease": "npm run test",
     "release": "standard-version",
@@ -65,12 +64,16 @@
       "git add"
     ]
   },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@types/node-fetch": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
     "eslint": "^6.8.0",
