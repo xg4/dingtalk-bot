@@ -2,6 +2,7 @@ import crypto from 'crypto'
 
 /**
  * 生成钉钉 🤖️ 签名
+ * @export
  * @param {string} value
  * @param {string} secret
  * @returns

@@ -8,26 +8,6 @@ export interface AtContent {
   isAtAll?: boolean
 }
 
-export interface ActionCardContent {
-  /** 首屏会话透出的展示内容 */
-  title: string
-  /** markdown格式的消息 */
-  text: string
-
-  /** 0-按钮竖直排列，1-按钮横向排列 */
-  btnOrientation?: string
-  /** 0-正常发消息者头像，1-隐藏发消息者头像 */
-  hideAvatar?: string
-
-  /** 单个按钮的方案。(设置此项和singleURL后btns无效) */
-  singleTitle?: string
-  /** 点击singleTitle按钮触发的URL */
-  singleURL?: string
-
-  /** 按钮的信息：title-按钮方案，actionURL-点击按钮触发的URL */
-  btns?: any[]
-}
-
 export interface LinkContent {
   /** 消息标题 */
   title: string
@@ -39,11 +19,35 @@ export interface LinkContent {
   picUrl?: string
 }
 
-export interface MarkdownContent {
+export interface ActionCardBase {
   /** 首屏会话透出的展示内容 */
   title: string
   /** markdown格式的消息 */
   text: string
+
+  /** 0-按钮竖直排列，1-按钮横向排列 */
+  btnOrientation?: '0' | '1'
+  /** 0-正常发消息者头像，1-隐藏发消息者头像 */
+  hideAvatar?: '0' | '1'
+}
+
+export interface ActionCardSingle extends ActionCardBase {
+  /** 单个按钮的方案。(设置此项和singleURL后btns无效) */
+  singleTitle: string
+  /** 点击singleTitle按钮触发的URL */
+  singleURL: string
+}
+
+export interface ActionCardBtns {
+  /** 按钮文本 */
+  title: string
+  /** 点击按钮触发的URL */
+  actionURL: string
+}
+
+export interface ActionCardContent extends ActionCardBase {
+  /** 按钮的信息：title-按钮方案，actionURL-点击按钮触发的URL */
+  btns: ActionCardBtns[]
 }
 
 export interface FeedCardContent {
@@ -55,12 +59,16 @@ export interface FeedCardContent {
   picURL: string
 }
 
+/**
+ * https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
+ * @export
+ * @class Bot
+ */
 export default class Bot {
   constructor(private webhook: string, private secret: string) {}
 
   private send(content: any) {
     const timestamp = Date.now()
-
     const url = new URL(this.webhook)
     url.searchParams.set('timestamp', timestamp.toString())
     url.searchParams.set(
@@ -72,13 +80,17 @@ export default class Bot {
       method: 'POST',
       body: JSON.stringify(content),
       headers: { 'Content-Type': 'application/json' }
-    }).then(response => response.json())
+    })
+      .then(response => response.json())
+      .then(result => (result.errcode ? Promise.reject(result) : result))
   }
 
   /**
    * 发送纯文本消息，支持@群内成员
-   * @param content 消息内容
-   * @param at @用户
+   * @param {string} content 消息内容
+   * @param {AtContent} [at={}]
+   * @returns
+   * @memberof Bot
    */
   text(content: string, at: AtContent = {}) {
     return this.send({
@@ -92,25 +104,33 @@ export default class Bot {
 
   /**
    * 发送单个图文链接
-   * @param data @interface LinkData
+   * @param {LinkContent} data
+   * @returns
+   * @memberof Bot
    */
-  link(data: LinkContent) {
+  link(link: LinkContent) {
     return this.send({
       msgtype: 'link',
-      link: data
+      link
     })
   }
 
   /**
    *
-   * @param title 首屏会话透出的展示内容
-   * @param content markdown格式的消息
-   * @param at @用户
+   * 发送 markdown 内容，支持@群内成员
+   * @param {string} title 首屏会话透出的展示内容
+   * @param {string} text markdown格式的消息
+   * @param {AtContent} [at={}]
+   * @returns
+   * @memberof Bot
    */
-  markdown(data: MarkdownContent, at: AtContent = {}) {
+  markdown(title: string, text: string, at: AtContent = {}) {
     return this.send({
       msgtype: 'markdown',
-      markdown: data,
+      markdown: {
+        title,
+        text
+      },
       at
     })
   }
@@ -118,19 +138,23 @@ export default class Bot {
   /**
    * 发送actionCard(动作卡片)
    * 支持多个按钮，支持Markdown
-   * @param data
+   * @param {(ActionCardSingle | ActionCardContent)} data
+   * @returns
+   * @memberof Bot
    */
-  actionCard(data: ActionCardContent) {
+  actionCard(actionCard: ActionCardSingle | ActionCardContent) {
     return this.send({
       msgtype: 'actionCard',
-      actionCard: data
+      actionCard
     })
   }
 
   /**
    * 发送feedCard，支持多图文链接
    * links可包含多个link，建议不要超过4个
-   * @param links
+   * @param {FeedCardContent[]} links
+   * @returns
+   * @memberof Bot
    */
   feedCard(links: FeedCardContent[]) {
     return this.send({
