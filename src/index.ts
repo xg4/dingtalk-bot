@@ -38,7 +38,7 @@ export interface ActionCardSingle extends ActionCardBase {
   singleURL: string
 }
 
-export interface ActionCardBtns {
+export interface ActionCardBtn {
   /** 按钮文本 */
   title: string
   /** 点击按钮触发的URL */
@@ -47,7 +47,7 @@ export interface ActionCardBtns {
 
 export interface ActionCardContent extends ActionCardBase {
   /** 按钮的信息：title-按钮方案，actionURL-点击按钮触发的URL */
-  btns: ActionCardBtns[]
+  btns: ActionCardBtn[]
 }
 
 export interface FeedCardContent {
