@@ -1,6 +1,6 @@
 {
   "name": "@xg4/dingtalk-bot",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "keywords": [],
   "homepage": "https://github.com/xg4/dingtalk-bot#readme",
@@ -31,7 +31,7 @@
     "prepublishOnly": "npm run build",
     "pretty": "prettier --write src/**/*",
     "postpublish": "git push --follow-tags",
-    "prerelease": "npm run test",
+    "prerelease": "npm run lint:fix",
     "release": "standard-version",
     "postrelease": "npm publish",
     "start": "rollup -c -w",
