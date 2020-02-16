@@ -19,6 +19,13 @@ export interface LinkContent {
   picUrl?: string
 }
 
+export interface MarkdownContent {
+  /** 首屏会话透出的展示内容 */
+  title: string
+  /** markdown格式的消息 */
+  text: string
+}
+
 export interface ActionCardBase {
   /** 首屏会话透出的展示内容 */
   title: string
@@ -116,21 +123,16 @@ export default class Bot {
   }
 
   /**
-   *
    * 发送 markdown 内容，支持@群内成员
-   * @param {string} title 首屏会话透出的展示内容
-   * @param {string} text markdown格式的消息
+   * @param {MarkdownContent} markdown
    * @param {AtContent} [at={}]
    * @returns
    * @memberof Bot
    */
-  markdown(title: string, text: string, at: AtContent = {}) {
+  markdown(markdown: MarkdownContent, at: AtContent = {}) {
     return this.send({
       msgtype: 'markdown',
-      markdown: {
-        title,
-        text
-      },
+      markdown,
       at
     })
   }
