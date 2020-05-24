@@ -34,10 +34,9 @@ export interface ActionCardBase {
 
   /** 0-按钮竖直排列，1-按钮横向排列 */
   btnOrientation?: '0' | '1'
-  /** 0-正常发消息者头像，1-隐藏发消息者头像 */
-  hideAvatar?: '0' | '1'
 }
 
+/** 整体跳转 */
 export interface ActionCardSingle extends ActionCardBase {
   /** 单个按钮的方案。(设置此项和singleURL后btns无效) */
   singleTitle: string
@@ -45,13 +44,14 @@ export interface ActionCardSingle extends ActionCardBase {
   singleURL: string
 }
 
-export interface ActionCardBtn {
-  /** 按钮文本 */
+export type ActionCardBtn = {
+  /** 按钮标题 */
   title: string
   /** 点击按钮触发的URL */
   actionURL: string
 }
 
+/** 独立跳转 */
 export interface ActionCardContent extends ActionCardBase {
   /** 按钮的信息：title-按钮方案，actionURL-点击按钮触发的URL */
   btns: ActionCardBtn[]
@@ -66,15 +66,18 @@ export interface FeedCardContent {
   picURL: string
 }
 
+interface DingtalkResult {
+  errcode: number
+  errmsg: string
+}
+
 /**
- * https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
- * @export
- * @class Bot
+ * dingtalk docs: https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
  */
 export default class Bot {
   constructor(private webhook: string, private secret: string) {}
 
-  private send(content: any) {
+  private send(content: any): Promise<DingtalkResult> {
     const timestamp = Date.now()
     const url = new URL(this.webhook)
     url.searchParams.set('timestamp', timestamp.toString())
@@ -93,13 +96,11 @@ export default class Bot {
   }
 
   /**
-   * 发送纯文本消息，支持@群内成员
+   * 发送纯文本消息，支持 @群内成员
    * @param {string} content 消息内容
-   * @param {AtContent} [at={}]
-   * @returns
-   * @memberof Bot
+   * @param {AtContent} [at]
    */
-  text(content: string, at: AtContent = {}) {
+  text(content: string, at?: AtContent) {
     return this.send({
       msgtype: 'text',
       text: {
@@ -111,9 +112,7 @@ export default class Bot {
 
   /**
    * 发送单个图文链接
-   * @param {LinkContent} data
-   * @returns
-   * @memberof Bot
+   * @param {LinkContent} link
    */
   link(link: LinkContent) {
     return this.send({
@@ -123,13 +122,11 @@ export default class Bot {
   }
 
   /**
-   * 发送 markdown 内容，支持@群内成员
+   * 发送 markdown 内容，支持 @群内成员
    * @param {MarkdownContent} markdown
-   * @param {AtContent} [at={}]
-   * @returns
-   * @memberof Bot
+   * @param {AtContent} [at]
    */
-  markdown(markdown: MarkdownContent, at: AtContent = {}) {
+  markdown(markdown: MarkdownContent, at?: AtContent) {
     return this.send({
       msgtype: 'markdown',
       markdown,
@@ -138,11 +135,8 @@ export default class Bot {
   }
 
   /**
-   * 发送actionCard(动作卡片)
-   * 支持多个按钮，支持Markdown
-   * @param {(ActionCardSingle | ActionCardContent)} data
-   * @returns
-   * @memberof Bot
+   * 发送 actionCard （动作卡片），支持多个按钮，支持 markdown
+   * @param {(ActionCardSingle | ActionCardContent)} actionCard
    */
   actionCard(actionCard: ActionCardSingle | ActionCardContent) {
     return this.send({
@@ -152,11 +146,9 @@ export default class Bot {
   }
 
   /**
-   * 发送feedCard，支持多图文链接
-   * links可包含多个link，建议不要超过4个
+   * 发送 feedCard，支持多图文链接
+   * links 可包含多个 link，建议不要超过 4 个
    * @param {FeedCardContent[]} links
-   * @returns
-   * @memberof Bot
    */
   feedCard(links: FeedCardContent[]) {
     return this.send({
