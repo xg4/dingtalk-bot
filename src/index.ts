@@ -89,10 +89,10 @@ export default class Bot {
     return fetch(url.toString(), {
       method: 'POST',
       body: JSON.stringify(content),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
-      .then(response => response.json())
-      .then(result => (result.errcode ? Promise.reject(result) : result))
+      .then((response) => response.json())
+      .then((result) => (result.errcode ? Promise.reject(result) : result))
   }
 
   /**
@@ -104,9 +104,9 @@ export default class Bot {
     return this.send({
       msgtype: 'text',
       text: {
-        content
+        content,
       },
-      at
+      at,
     })
   }
 
@@ -117,7 +117,7 @@ export default class Bot {
   link(link: LinkContent) {
     return this.send({
       msgtype: 'link',
-      link
+      link,
     })
   }
 
@@ -130,7 +130,7 @@ export default class Bot {
     return this.send({
       msgtype: 'markdown',
       markdown,
-      at
+      at,
     })
   }
 
@@ -141,7 +141,7 @@ export default class Bot {
   actionCard(actionCard: ActionCardSingle | ActionCardContent) {
     return this.send({
       msgtype: 'actionCard',
-      actionCard
+      actionCard,
     })
   }
 
@@ -154,8 +154,8 @@ export default class Bot {
     return this.send({
       msgtype: 'feedCard',
       feedCard: {
-        links
-      }
+        links,
+      },
     })
   }
 }
