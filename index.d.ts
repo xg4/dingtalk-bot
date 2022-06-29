@@ -118,7 +118,8 @@ export default class DtBot {
    * 发送 actionCard （动作卡片），支持多个按钮，支持 markdown
    * @param {(ActionCardSingle | ActionCardContent)} actionCard
    */
-  actionCard(actionCard: ActionCardSingle | ActionCardContent): Promise<Result>
+  actionCard(actionCard: ActionCardSingle): Promise<Result>
+  actionCard(actionCard: ActionCardContent): Promise<Result>
   /**
    * 发送 feedCard，支持多图文链接
    * links 可包含多个 link，建议不要超过 4 个
