@@ -7,7 +7,7 @@ import crypto from 'node:crypto'
  * @param {string} secret
  * @returns
  */
-export function sign(value, secret) {
+export function getSignature(value: string, secret: string) {
   return crypto
     .createHmac('sha256', secret)
     .update(value)

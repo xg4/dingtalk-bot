@@ -1,10 +1,24 @@
 import { fetch } from 'undici'
-import { sign } from './util.js'
+import { getSignature } from './helpers'
+import {
+  ActionCardContent,
+  ActionCardSingle,
+  AtContent,
+  FeedCardContent,
+  LinkContent,
+  MarkdownContent,
+  Options,
+  Result,
+} from './types'
+
 /**
  * dingtalk docs: https://open.dingtalk.com/document/group/custom-robot-access
  */
 export default class DtBot {
-  constructor({ webhook, secret }) {
+  private webhook: string
+  private secret: string
+
+  constructor({ webhook, secret }: Options) {
     if (!webhook || !secret) {
       throw new Error('DtBot options: webhook and secret are required')
     }
@@ -12,13 +26,13 @@ export default class DtBot {
     this.secret = secret
   }
 
-  async send(content) {
+  async send(content: unknown) {
     const timestamp = Date.now()
     const url = new URL(this.webhook)
     url.searchParams.set('timestamp', timestamp.toString())
     url.searchParams.set(
       'sign',
-      sign(timestamp + '\n' + this.secret, this.secret)
+      getSignature(timestamp + '\n' + this.secret, this.secret)
     )
 
     const response = await fetch(url, {
@@ -26,7 +40,7 @@ export default class DtBot {
       body: JSON.stringify(content),
       headers: { 'Content-Type': 'application/json' },
     })
-    const result = await response.json()
+    const result = (await response.json()) as Result
     return result.errcode ? Promise.reject(result) : result
   }
 
@@ -35,7 +49,7 @@ export default class DtBot {
    * @param {string} content 消息内容
    * @param {AtContent} [at]
    */
-  text(content, at) {
+  text(content: string, at?: AtContent) {
     return this.send({
       msgtype: 'text',
       text: {
@@ -49,7 +63,7 @@ export default class DtBot {
    * 发送单个图文链接
    * @param {LinkContent} link
    */
-  link(link) {
+  link(link: LinkContent) {
     return this.send({
       msgtype: 'link',
       link,
@@ -61,7 +75,7 @@ export default class DtBot {
    * @param {MarkdownContent} markdown
    * @param {AtContent} [at]
    */
-  markdown(markdown, at) {
+  markdown(markdown: MarkdownContent, at?: AtContent) {
     return this.send({
       msgtype: 'markdown',
       markdown,
@@ -69,11 +83,13 @@ export default class DtBot {
     })
   }
 
+  actionCard(actionCard: ActionCardSingle): Promise<Result>
+  actionCard(actionCard: ActionCardContent): Promise<Result>
   /**
    * 发送 actionCard （动作卡片），支持多个按钮，支持 markdown
    * @param {(ActionCardSingle | ActionCardContent)} actionCard
    */
-  actionCard(actionCard) {
+  actionCard(actionCard: ActionCardSingle | ActionCardContent) {
     return this.send({
       msgtype: 'actionCard',
       actionCard,
@@ -85,7 +101,7 @@ export default class DtBot {
    * links 可包含多个 link，建议不要超过 4 个
    * @param {FeedCardContent[]} links
    */
-  feedCard(links) {
+  feedCard(links: FeedCardContent[]) {
     return this.send({
       msgtype: 'feedCard',
       feedCard: {

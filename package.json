@@ -14,13 +14,22 @@
   "license": "MIT",
   "author": "xg4 <xingor4@gmail.com>",
   "type": "module",
-  "exports": "./index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/types",
   "files": [
-    "index.d.ts",
-    "index.js",
-    "helper.js"
+    "dist"
   ],
   "scripts": {
+    "build": "rimraf dist && npm run build:types && npm run build:js",
+    "build:js": "rollup -c",
+    "build:types": "tsc --emitDeclarationOnly",
     "prepare": "husky install"
   },
   "lint-staged": {
@@ -33,17 +42,29 @@
     "undici": "5.5.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
     "@commitlint/cli": "17.0.3",
     "@commitlint/config-conventional": "17.0.3",
+    "@rollup/plugin-babel": "5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/commit-analyzer": "9.0.2",
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "8.0.4",
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
+    "@types/node": "18.0.1",
     "husky": "8.0.1",
     "lint-staged": "13.0.3",
     "prettier": "2.7.1",
-    "semantic-release": "19.0.3"
+    "rimraf": "3.0.2",
+    "rollup": "2.75.7",
+    "rollup-plugin-terser": "7.0.2",
+    "semantic-release": "19.0.3",
+    "typescript": "4.7.4"
   }
 }

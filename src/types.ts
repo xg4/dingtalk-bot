@@ -80,7 +80,8 @@ export interface FeedCardContent {
   /** 单条信息后面图片的URL */
   picURL: string
 }
-interface Result {
+
+export interface Result {
   errcode: number
   errmsg: string
 }
@@ -88,42 +89,4 @@ interface Result {
 export interface Options {
   webhook: string
   secret: string
-}
-/**
- * dingtalk docs: https://open.dingtalk.com/document/group/custom-robot-access
- */
-export default class DtBot {
-  private webhook
-  private secret
-  constructor(options: Options)
-  private send
-  /**
-   * 发送纯文本消息，支持 @群内成员
-   * @param {string} content 消息内容
-   * @param {AtContent} [at]
-   */
-  text(content: string, at?: AtContent): Promise<Result>
-  /**
-   * 发送单个图文链接
-   * @param {LinkContent} link
-   */
-  link(link: LinkContent): Promise<Result>
-  /**
-   * 发送 markdown 内容，支持 @群内成员
-   * @param {MarkdownContent} markdown
-   * @param {AtContent} [at]
-   */
-  markdown(markdown: MarkdownContent, at?: AtContent): Promise<Result>
-  /**
-   * 发送 actionCard （动作卡片），支持多个按钮，支持 markdown
-   * @param {(ActionCardSingle | ActionCardContent)} actionCard
-   */
-  actionCard(actionCard: ActionCardSingle): Promise<Result>
-  actionCard(actionCard: ActionCardContent): Promise<Result>
-  /**
-   * 发送 feedCard，支持多图文链接
-   * links 可包含多个 link，建议不要超过 4 个
-   * @param {FeedCardContent[]} links
-   */
-  feedCard(links: FeedCardContent[]): Promise<Result>
 }
