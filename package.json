@@ -20,7 +20,9 @@
     "index.js",
     "helper.js"
   ],
-  "scripts": {},
+  "scripts": {
+    "prepare": "husky install"
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
