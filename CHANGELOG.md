@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/xg4/dingtalk-bot/compare/v1.0.3...v1.0.4) (2022-07-06)
+
+
+### Bug Fixes
+
+* npm tarball dir ([9c46fd3](https://github.com/xg4/dingtalk-bot/commit/9c46fd32529c1fbaae53e584390454dd8648a191))
+
 ## [1.0.3](https://github.com/xg4/dingtalk-bot/compare/v1.0.2...v1.0.3) (2022-07-05)
 
 
