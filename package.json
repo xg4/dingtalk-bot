@@ -39,7 +39,7 @@
     ]
   },
   "dependencies": {
-    "undici": "5.5.1"
+    "undici": "5.19.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
